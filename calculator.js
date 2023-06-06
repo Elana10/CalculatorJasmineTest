@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
-
+ 
 function getCurrentUIValues() {
   return {
     amount: +(document.getElementById("loan-amount").value),
@@ -17,7 +17,6 @@ function getCurrentUIValues() {
   } 
 }
 
-//filled in all of the below code based on comments. WHY SO MANY FUNCTIONS?!?
 
 // Get the inputs from the DOM.
 // Put some default values in the inputs
@@ -27,7 +26,7 @@ function setupIntialValues() {
   document.getElementById("loan-years").value = 1
   document.getElementById("loan-rate").value = 5
   let obj = getCurrentUIValues();
-  calculateMonthlyPayment(obj);
+  update();
 
 }
 
@@ -35,7 +34,8 @@ function setupIntialValues() {
 // Update the monthly payment
 function update() {
   let objInput = getCurrentUIValues();
-  calculateMonthlyPayment(objInput);
+  let strPayment = calculateMonthlyPayment(objInput);
+  updateMonthly(strPayment);
 
 }
 
@@ -43,11 +43,16 @@ function update() {
 // calculate the monthly payment.  The output should be a string
 // that always has 2 decimal places.
 function calculateMonthlyPayment(values) {
-  let monthlyPaymentCalc = ( (values['amount'] * values['rate']) / 
-                          ( 1 - ( 1 + values['rate'])^(values['years'] * 12))
-                        );
+  let P = values['amount'];
+  let i = values['rate'] / 12/100;
+  let n = values['years'] * 12;
+
+  let monthlyPaymentCalc = ( P * i ) / ( 1 - Math.pow((1+i),(-n)));
+
   let monthlyPayment = Math.round((monthlyPaymentCalc+ Number.EPSILON)* 100) /100;
-  updateMonthly(monthlyPayment);
+  let stringPayment = monthlyPayment.toString();
+
+  return stringPayment;
 }
 
 // Given a string representing the monthly payment value,
@@ -55,5 +60,6 @@ function calculateMonthlyPayment(values) {
 function updateMonthly(monthly) {
   let outputPayment = document.getElementById('monthly-payment');
   outputPayment.innerText = monthly;
+  return monthly;
 }
 
